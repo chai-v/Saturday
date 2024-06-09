@@ -14,6 +14,7 @@ import {
     MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { BufferMemory } from "langchain/memory";
+import User from '../../models/user';
 
 import { Pinecone } from "@pinecone-database/pinecone";
 import { Document } from "@langchain/core/documents";
@@ -43,12 +44,12 @@ const chatPrompt = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`
     Add an academic inclined prompt
     Insert the chat history here
+    {history}
     `),
-    new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate("{query}"),
   ]);
 
-  async function initializeVectorStore(){
+  async function initializeVectorStore(pineconeIndex){
     const vectorStore = await PineconeStore.fromExistingIndex(
       googleEmbeddings,
       { pineconeIndex }
@@ -56,14 +57,8 @@ const chatPrompt = ChatPromptTemplate.fromMessages([
     return vectorStore;
   }
 
-  const chain = new ConversationChain({
-    prompt: chatPrompt,
-    llm: chat,
-    memory: new BufferMemory({ returnMessages: true, memoryKey: "history", inputKey: "query"}),
-  });
-
-  async function getResponse(query, vectorEmbeddings){
-    const response = await chain.call({ query: query, embeddings: vectorEmbeddings });
+  async function getResponse(chain, query, vectorEmbeddings, chatHistory){
+    const response = await chain.call({ query: query, embeddings: vectorEmbeddings, history: chatHistory});
     return response;
   }
 
@@ -86,14 +81,27 @@ const chatPrompt = ChatPromptTemplate.fromMessages([
   });
 
   router.post('/query', async (req, res) => {
-
-    //Here need to get the list of indices from the chat and then
+    const email = req.body.email;
+    const chatId = req.body.chat;
     const query = req.body.query;
+
+    let user = await User.findOne({ email });
+    const indexNames = user.chats[chatId]
+
+    const vectorEmbeddings = "";
+
+    indexNames.map(async (indexName) => {
+        const pineStore = initializeVectorStore(indexName);
+        const results = await pineStore.similaritySearch(query, 10000);
+        vectorEmbeddings = vectorEmbeddings + results.map((result) => result.pageContent).join("/n");
+    })
+
     try{
-        const results = await (await pineStore).similaritySearch(query, 10000);
-        const vectorEmbeddings = results.map((result) => result.pageContent).join("/n");
-        console.log(vectorEmbeddings);
-        const response = await getResponse(query, vectorEmbeddings);
+        const chain = new ConversationChain({
+            prompt: chatPrompt,
+            llm: chat,
+          });
+        const response = await getResponse(chain, query, vectorEmbeddings);
         res.json(response);
     } catch(error){
         console.log(error);
