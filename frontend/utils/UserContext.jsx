@@ -7,10 +7,18 @@ export const useAuth = () => {
   };
 
   export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(
+        {
+            email: "",
+            chats: []
+        }
+    );
   
     const userlogin = (userData) => {
-      setUser(userData);
+        setUser({
+            email: userData.user.email,
+            chats: userData.user.chats
+        });
     };
   
     const userlogout = () => {

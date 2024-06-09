@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../utils/UserContext';
 import axios from 'axios';
+
 function Sidebar() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { user, userlogin, userlogout } = useAuth();
+
   // const chats = user.chats;
   const chats = [
     { id: 1, name: 'Chat 1' },
@@ -16,6 +18,7 @@ function Sidebar() {
     setSelectedFiles(files);
   
     const formData = new FormData();
+    formData.append('email', user.email); 
     files.forEach((file) => {
       formData.append('pdfPaths', file);
     });

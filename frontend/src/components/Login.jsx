@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../utils/UserContext';
 
 function Login() {
     const navigate = useNavigate();
     const [toggle, setToggle] = useState(true);
+    const {user, userlogin, userlogout} = useAuth()
 
     const [details, setDetails] = useState({
         email: "",
@@ -16,8 +18,8 @@ function Login() {
         setDetails({...details, [e.target.name]: e.target.value})
     }
 
-    const handleSubmit = async () =>{
-        navigate("/dashboard");
+    const handleSubmit = async (e) =>{
+        e.preventDefault();
         if(toggle){
             try{
                 const response = await axios.post("http://localhost:5000/auth/login", {
@@ -25,7 +27,7 @@ function Login() {
                     password: details.password
                 });
                 navigate("/dashboard");
-                console.log(response.data);
+                await userlogin(response.data);
             } catch(error){
                 console.error("Login failed:", error);
             }
@@ -37,7 +39,7 @@ function Login() {
                         password: details.password
                     });
                     navigate("/dashboard");
-                    console.log(response.data);
+                    await userlogin(response.data);
                 } catch(error){
                     console.error("Signup failed:", error);
                 }
