@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../utils/UserContext';
 import axios from 'axios';
 
-function Sidebar() {
+function Sidebar({ handleSidebarStateUpdate }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { user, userlogin, userlogout } = useAuth();
+  const chats = user.chats;
 
-  // const chats = user.chats;
-  const chats = [
-    { id: 1, name: 'Chat 1' },
-    { id: 2, name: 'Chat 2' },
-    { id: 3, name: 'Chat 3' },
-  ];
+  const handleStateUpdate = (chatId) => {
+    handleSidebarStateUpdate(chatId); 
+  };
 
   const handleFileChange = async (event) => {
     const files = Array.from(event.target.files);
@@ -30,7 +28,6 @@ function Sidebar() {
       console.error('Error uploading files:', error);
     }
   };
-  
 
   return (
     <div className="bg-gray-900 h-screen w-full flex flex-col">
@@ -40,8 +37,8 @@ function Sidebar() {
       
       <div className="flex-1 overflow-y-auto flex flex-col items-center gap-2 py-4">
         {chats.map((chat) => (
-          <button key={chat.id} className="bg-blue-500 text-white py-2 rounded-lg w-9/12">
-            {chat.name}
+          <button key={chat.id} className="bg-blue-500 text-white py-2 rounded-lg w-9/12" onClick={() => handleStateUpdate(chat.id)}>
+            {chat.title}
           </button>
         ))}
       </div>

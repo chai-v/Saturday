@@ -4,6 +4,7 @@ import auth from './routes/auth/userauth.js';
 import connectDB from './config/mongo.js'; 
 import FileUpload from './routes/db/embedding.js'
 import chatPrompt from './routes/chat/chat.js'
+import genai from './routes/chat/genai.js'
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -19,6 +20,8 @@ app.get('/', (req, res) => {
 app.use('/chat',chatPrompt)
 app.use('/auth', auth); 
 app.use('/fileupload',FileUpload)
+app.use('/genai', genai)
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

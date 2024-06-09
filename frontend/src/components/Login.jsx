@@ -38,6 +38,7 @@ function Login() {
                         email: details.email,
                         password: details.password
                     });
+                    console.log(response.data);
                     navigate("/dashboard");
                     await userlogin(response.data);
                 } catch(error){

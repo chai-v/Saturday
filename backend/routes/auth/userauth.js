@@ -24,7 +24,7 @@ router.post('/signup', async (req, res) => {
 
         await user.save();
 
-        res.send('User registered');
+        res.send({ user: { email: user.email, chats: user.chats } });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');

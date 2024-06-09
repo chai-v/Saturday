@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import axios from 'axios';
+import { useAuth } from '../../utils/UserContext';
 
-function Chat() {
+function Chat({chatID}) {
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const {user} = useAuth();
+    const [chatHistory, setChatHistory] = useState([]);
+
+    // useEffect(() => {
+    //     setChatHistory(user.chats[chatID-1].history)
+    // }, [chatID]);
 
     const handleFileChange = async (event) => {
         const files = Array.from(event.target.files);
@@ -12,29 +19,43 @@ function Chat() {
 
     const handleSend = async () => {
         try {
-            const formData = new FormData();
-            selectedFiles.forEach(file => {
-                formData.append('images', file);
-            });
+            if (selectedFiles.length > 0) {
+                const formData = new FormData();
+                formData.append('chat', chatID);
+                formData.append('email', user.email);
+                selectedFiles.forEach(file => {
+                    formData.append('images', file);
+                });
+    
+                const response = await axios.post('http://localhost:5000/genai/imageupload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log(response);
+                await setChatHistory([...chatHistory, ['ai', response.data.result]])
+                setSelectedFiles([]);
+            } else {
+                const message = document.getElementById('message-input').value;
 
-            axios.post('http://localhost:5000/chat/imageupload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then(response => {
-                console.log('Response:', response.data); // Log the response data
-            })
-            .catch(error => {
-                console.error('Error:', error); // Log any errors
-            });
-
-            // Optional: Clear selected files after sending
-            setSelectedFiles([]);
+                const formData = new FormData();
+                formData.append('chat', chatID);
+                formData.append('email', user.email);
+                formData.append('query', message);
+                
+                const response = await axios.post('http://localhost:5000/chat/query', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log(response.data);
+                document.getElementById('message-input').value = '';
+            }
         } catch (error) {
-            console.error('Error sending images:', error);
+            console.error('Error sending message or images:', error);
         }
     };
+    
 
     return (
         <div className='w-full h-full px-4 bg-slate-800'>
@@ -43,10 +64,13 @@ function Chat() {
                     <h1 className="text-lg font-bold text-stone-50">Chat</h1>
                 </div>
                 <div className='flex-1 flex flex-col items-center justify-between'>
-                    <div className="w-4/5 bg-slate-700 flex-1 p-4 overflow-y-auto rounded-md">
-                        <div className="flex flex-col gap-2">
-                            <div className="bg-blue-500 text-white py-2 px-4 rounded-lg self-start max-w-sm">Hello!</div>
-                            <div className="bg-blue-500 text-white py-2 px-4 rounded-lg self-end max-w-sm">Hi!</div>
+                    <div className="w-4/5 h-64 bg-slate-700 flex-1 p-4 overflow-y-scroll rounded-md">
+                        <div className="w-4/5 h-64 flex flex-col gap-2">
+                        {chatHistory.map((msg, index) => (
+                            <div key={index} className={`mb-2 p-2 ${msg[0]==='User' ? 'bg-blue-600 text-white' : 'bg-slate-500 text-white'} rounded shadow`}>
+                                {msg[1]}
+                            </div>
+                        ))}
                         </div>
                     </div>
 
@@ -61,6 +85,7 @@ function Chat() {
                         </label>
                         <input id="file-image" type="file" className="hidden" multiple onChange={handleFileChange} />
                         <TextareaAutosize
+                            id="message-input"
                             className="flex-1 bg-slate-700 text-white outline-none rounded-md p-2 z-10 no-scrollbar"
                             placeholder="Type a message..."
                             minRows={1}
