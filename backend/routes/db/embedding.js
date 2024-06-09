@@ -1,5 +1,5 @@
 //Handle file uploades and create embeddings for each file in pine cone
-import express, { Request, Response, Router } from 'express';
+import express from 'express';
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { Document } from "@langchain/core/documents";
@@ -9,13 +9,15 @@ import multer from 'multer';
 import fs from 'fs/promises';
 import path from 'path';
 import { PDFExtract } from 'pdf.js-extract';
+import crypto from 'crypto';
+
 
 import dotenv from 'dotenv';
 dotenv.config();
 
 let {MONGODB_URL, GEMINI_API_KEY, PINECONE_API_KEY, PINECONE_ENVIRONMENT } = process.env;
 
-const router = Router();
+const router = express.Router();
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -68,78 +70,74 @@ function chunkArray(array, chunkSize){
     return chunks;
 }
 
+function generateRandomString(length) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 async function processFiles(email, files){
-    files = [
-        {
-            filename: 'file1.txt',
-            content: ['This is the content of file1.txt', 'This is the content of file1.txt']
-        },
-        {
-            filename: 'file2.txt',
-            content: ['This is the content of file2.txt','This is the content of file2.txt']
-        }
-    ]
 
     let indices = [];
 
-    files.map(async (filename, content) => {
+    for (const { filename, chunks } of files) {
+        const uniqueIndex = generateRandomString(10);
 
-        const randomString = crypto.randomBytes(4).toString('hex');
-        const titleChars = filename.substring(0, 4);
-        const uniqueIndex = titleChars + randomString;
-
-        await pc.createIndex({
+        await pinecone.createIndex({
             name: uniqueIndex,
             dimension: 768,
             metric: 'cosine',
             spec: {
                 serverless: {
-                cloud: 'aws',
-                region: 'us-east-1'
+                    cloud: 'aws',
+                    region: 'us-east-1'
                 }
             }
         });
 
         const index = pinecone.Index(uniqueIndex);
 
-        let records = []
-
-        content.forEach((chunk) => {
-            records.push(new Document({ pageContent: chunk, metadata: {} }))
-        })
-
+        let records = chunks.map(chunk => new Document({ pageContent: chunk, metadata: {} }));
         const recordChunks = chunkArray(records, 5);
 
-        for (const record of records) {
+        for (const record of recordChunks) {
             try {
                 await PineconeStore.fromDocuments(record, googleEmbeddings, {
-                    index,
-                    maxConcurrency: 5, 
+                    pineconeIndex: index,
+                    maxConcurrency: 5,
                 });
-                console.log(`Processed batch of ${chunk.length} records`);
+                console.log(`Processed batch of ${record.length} records`);
             } catch (error) {
                 console.error('Error processing batch:', error);
             }
         }
 
-        indices = [...indices, uniqueIndex]
-    })
+        indices.push(uniqueIndex);
+    }
 
     let user = await User.findOne({ email });
+    let length = user.chats.length;
     let newChat = {
-        id:'',
-        title:'',
+        id: length + 1,
+        title: 'Chat',
         indices: indices,
         history: []
-    }
-    user.chats = [...user.chats, newChat];
+    };
+    user.chats.push(newChat);
     await user.save();
 }
 
 router.post('/', upload.array('pdfPaths'), async (req, res) => {
     try {
         const files = req.files; 
+        const email = req.body.email;
         const textChunksArray = [];
+
+        console.log("The email is", email);
 
         for (const file of files) {
             const pdfPath = file.path; 
@@ -150,6 +148,7 @@ router.post('/', upload.array('pdfPaths'), async (req, res) => {
             await fs.unlink(pdfPath);
         }
 
+        await processFiles(email, textChunksArray);
         res.json({ success: true, textChunksArray });
     } catch (error) {
         console.error(error);
