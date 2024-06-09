@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import auth from './routes/auth/userauth.js';
 import connectDB from './config/mongo.js'; 
-
+import FileUpload from './routes/db/embedding.js'
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', auth); 
-
+app.use('/fileupload',FileUpload)
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
