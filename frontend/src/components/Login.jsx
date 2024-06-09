@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const navigate = useNavigate();
-    const [toggle, setToggle] = useState(false);
+    const [toggle, setToggle] = useState(true);
 
     const [details, setDetails] = useState({
         email: "",
