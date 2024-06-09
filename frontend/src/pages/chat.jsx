@@ -11,7 +11,7 @@ function Chat() {
 
   const [userMessage, setUserMessage] = useState('');
   const [aiResponse, setAiResponse] = useState('');
-  const [chatHistory, setChatHistory] = useState(ChatHistory); // added a state for chat history
+  const [chatHistory, setChatHistory] = useState([]); // added a state for chat history
 
   const getResponseFromChatHistory = (userMessage) => {
     // Implement logic to dynamically answer from chat history
