@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../utils/UserContext';
-
+import axios from 'axios';
 function Sidebar() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { user, userlogin, userlogout } = useAuth();
@@ -11,11 +11,23 @@ function Sidebar() {
     { id: 3, name: 'Chat 3' },
   ];
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const files = Array.from(event.target.files);
-    //Convert and send the files to the backend
     setSelectedFiles(files);
+  
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('pdfPaths', file);
+    });
+  
+    try {
+      const response = await axios.post('http://localhost:5000/fileupload', formData);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
   };
+  
 
   return (
     <div className="bg-gray-900 h-screen w-full flex flex-col">

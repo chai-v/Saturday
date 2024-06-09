@@ -5,7 +5,10 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { Document } from "@langchain/core/documents";
 import { PineconeStore } from "@langchain/pinecone";
 import User from '../../models/user.js';
-
+import multer from 'multer';
+import fs from 'fs/promises';
+import path from 'path';
+import { PDFExtract } from 'pdf.js-extract';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -13,6 +16,37 @@ dotenv.config();
 let {MONGODB_URL, GEMINI_API_KEY, PINECONE_API_KEY, PINECONE_ENVIRONMENT } = process.env;
 
 const router = Router();
+
+const upload = multer({ dest: 'uploads/' });
+
+async function fetchPDFTextChunks(pdfPath, linesPerChunk = 20) {
+    const pdfBuffer = await fs.readFile(pdfPath);
+    const pdfExtract = new PDFExtract();
+    const data = await pdfExtract.extractBuffer(pdfBuffer);
+    const textChunks = [];
+    let accumulator = "";
+    let lineCounter = 0;
+
+    for (const page of data.pages) {
+        for (const content of page.content) {
+            if (content.str) {
+                accumulator += content.str.trim() + ' ';
+                lineCounter++;
+                if (lineCounter >= linesPerChunk) {
+                    textChunks.push(accumulator.trim());
+                    accumulator = "";
+                    lineCounter = 0;
+                }
+            }
+        }
+    }
+
+    if (accumulator.trim().length > 0) {
+        textChunks.push(accumulator.trim());
+    }
+
+    return textChunks;
+}
 
 const pinecone = new Pinecone(
     {
@@ -102,6 +136,25 @@ async function processFiles(email, files){
     await user.save();
 }
 
+router.post('/', upload.array('pdfPaths'), async (req, res) => {
+    try {
+        const files = req.files; 
+        const textChunksArray = [];
 
-//Route to handle the uploaded files
+        for (const file of files) {
+            const pdfPath = file.path; 
+            const textChunks = await fetchPDFTextChunks(pdfPath);
+            textChunksArray.push({ filename: file.originalname, chunks: textChunks });
 
+           
+            await fs.unlink(pdfPath);
+        }
+
+        res.json({ success: true, textChunksArray });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'An error occurred while processing PDFs.' });
+    }
+});
+
+export default router;
