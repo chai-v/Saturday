@@ -43,17 +43,11 @@ function Login() {
         e.preventDefault();
         if(toggle){
             try{
-                const response = await axios.post("http://localhost:5000/auth/login", {
+                const response = await axios.post("https://saturday-backend.vercel.app/auth/login", {
                     email: details.email,
                     password: details.password
                 });
-                navigate("/dashboard");
                 await userlogin(response.data);
-                // if (user.chats.length>0){
-                //     console.log(user.chats[0])
-                //     setChat(user.chats[0])
-                //     setChatID(1)
-                // }
             } catch(error){
                 document.getElementById("error").innerHTML = "Invalid login: "+error.response.data.errors[0].msg;
                 console.error("Login failed:", error);
@@ -61,7 +55,7 @@ function Login() {
         } else {
             if(details.password === details.confirmPassword){
                 try{
-                    const response = await axios.post("http://localhost:5000/auth/signup", {
+                    const response = await axios.post("https://saturday-backend.vercel.app/auth/signup", {
                         email: details.email,
                         password: details.password
                     });
@@ -78,6 +72,12 @@ function Login() {
             }
         }
     }
+
+    useEffect(()=>{
+        if(user && user.email!==''){
+            navigate("/dashboard");
+        }
+    },[user])
     
 
     return (

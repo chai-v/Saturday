@@ -21,7 +21,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`w-screen ${isMobile ? 'h-screen' : 'h-screen'} bg-slate-900 flex flex-col`}>
+    <div className={`w-screen bg-slate-900 flex flex-col items-center`}>
       {/* Nav bar */}
       <div className="nav w-full h-14 flex items-center justify-between p-4 bg-black content-center frosted sticky top-0 bg-opacity-40 z-40">
         <h1 className="text-slate-300 font-sans font-bold">SATURDAY</h1>
@@ -30,14 +30,14 @@ function App() {
         </a>
       </div>
 
-      <div className={`content w-full flex-1 ${isMobile ? 'flex flex-col content-center overflow-scroll items-center justify-center p-6' : 'grid grid-cols-3'}`}>
+      <div className={`content w-screen h-screen  ${isMobile ? 'flex flex-col content-center overflow-scroll items-center justify-center p-6' : 'grid grid-cols-3'}`}>
         <>
         <div className="text-slate-300 m-auto md:col-span-2 font-sans font-bold flex flex-col  items-center">
           <div className="gap-6 text-center md:text-left">
             <h1 className="text-5xl">Unlock the power of <span className="text-blue-500">SATURDAY</span></h1>
             <br />
             <p className="text-slate-400">
-              Multimodal Learning assistant powered by Gemini
+              Multimodal Learning assistant powered by Gemini. Scroll for more information
             </p>
           </div>
         </div>
@@ -45,6 +45,20 @@ function App() {
           <Login />
         </div>
         </>
+      </div>
+      <div className='bg-slate-200 w-4/5 rounded-md p-6 mb-6'>
+          <h1 className='font-bold text-blue-950 text-2xl'>Saturday</h1>
+          <p>A multi modal chatbot powered by Gemini to consume notes with ease</p>
+          <p>A play on Tony Stark's Friday, Saturday allows users query their PDF notes and get custom responses with the help of embeddings. Users can also query their notes using images of question banks</p>
+          <h1 className='font-bold text-blue-950 text-xl mt-4 mb-2'>Architecture</h1>
+          <img className={`${isMobile ? 'w-full' : 'w-1/2'} mr-auto ml-auto mb-2`} src="/arch.png"></img>
+          <p className='mb-2'>To start a new chat, PDFs must be uploaded. Each PDF is then procressed and a new embeddings index is created on Pinecone.</p>
+          <p className='mb-2'>All queries are answered with the power of Gemini 1.5</p>
+          <p className='mb-2'>When users send a query, the information relevent to the query is fetched from the PDF with Pinecone through cosine similarity search.</p>
+          <p className='mb-2'>Similarliy users can upload images of question banks from which questions are extracted using Tesseract. These questions are then answered using relevent info from embeddings.</p>
+          <p className='mb-2'>Chat history is stateful and stored in MongoDB to provide a chatGPT like experience with contextual questions and chat bot memory</p>
+          <h1 className='font-bold text-blue-950 text-xl mt-4 mb-2'>Note</h1>
+          <p className='mb-2'>Since free tier of Pinecone is used, only four documents can be uploaded at maximum. If a new chat creation has failed, this can be the reason.</p>
       </div>
     </div>
   )

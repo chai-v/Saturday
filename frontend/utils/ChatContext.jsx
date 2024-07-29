@@ -18,7 +18,7 @@ export const ChatProvider = ({ children }) => {
     const updateChat = async () => {
         if(updated){
             try{
-                const response = await axios.post('http://localhost:5000/chat/updatechat', {
+                const response = await axios.post('https://saturday-backend.vercel.app/chat/updatechat', {
                     email: user.email,
                     chat: chatID,
                     history: chatHistory
@@ -28,7 +28,7 @@ export const ChatProvider = ({ children }) => {
                     }
                 });
                 console.log(response);
-                const newUser = await axios.post('http://localhost:5000/auth/refresh', {
+                const newUser = await axios.post('https://saturday-backend.vercel.app/auth/refresh', {
                     email: user.email
                 })
                 await userlogin(newUser.data);
@@ -36,6 +36,7 @@ export const ChatProvider = ({ children }) => {
             } catch (error) {
                 console.error('Error updating chat:', error);
             }
+            setUpdated(false);
         }
 
         if(user.chats.length>0){

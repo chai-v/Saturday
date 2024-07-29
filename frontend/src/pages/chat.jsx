@@ -42,7 +42,7 @@ function Chat({handleMenu, isMobile}) {
                     formData.append('images', file);
                 });
 
-                const response = await axios.post('http://localhost:5000/chat/imageupload', formData, {
+                const response = await axios.post('https://saturday-backend.vercel.app/chat/imageupload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -59,7 +59,7 @@ function Chat({handleMenu, isMobile}) {
                 
                 setChatHistory(prevChatHistory => [...prevChatHistory, { role: 'User', content: message }]);
 
-                const response = await axios.post('http://localhost:5000/chat/query', {
+                const response = await axios.post('https://saturday-backend.vercel.app/chat/query', {
                     email: user.email,
                     chat: chatID,
                     query: message,
