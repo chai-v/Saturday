@@ -4,8 +4,6 @@ dotenv.config();
 
 const mongoURI = process.env.MONGODB_URL;
 
-console.log(mongoURI);
-
 const connectDB = async () => {
     try {
         console.log()

@@ -80,7 +80,7 @@ function generateRandomString(length) {
     return result;
 }
 
-async function processFiles(email, files){
+async function processFiles(email, title, description, files, filenames){
 
     let indices = [];
 
@@ -123,7 +123,9 @@ async function processFiles(email, files){
     let length = user.chats.length;
     let newChat = {
         id: length + 1,
-        title: 'Chat',
+        title: title,
+        filenames: filenames,
+        description: description,
         indices: indices,
         history: []
     };
@@ -135,6 +137,10 @@ router.post('/', upload.array('pdfPaths'), async (req, res) => {
     try {
         const files = req.files; 
         const email = req.body.email;
+        const title = req.body.title;
+        const filenames = req.body.filenames;
+        console.log(filenames)
+        const description = req.body.description;
         const textChunksArray = [];
 
         console.log("The email is", email);
@@ -148,7 +154,7 @@ router.post('/', upload.array('pdfPaths'), async (req, res) => {
             await fs.unlink(pdfPath);
         }
 
-        await processFiles(email, textChunksArray);
+        await processFiles(email, title, description, textChunksArray, filenames);
         res.json({ success: true, textChunksArray });
     } catch (error) {
         console.error(error);

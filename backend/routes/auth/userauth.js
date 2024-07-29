@@ -54,4 +54,17 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/refresh', async(req,res) => {
+    try{
+        let user = await User.findOne({ email: req.body.email });
+        if(!user){
+            return res.status(400).json({errors: [{msg: 'Invalid Email'}]})
+        }
+        res.json({user: {email: user.email, chats: user.chats}})
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+})
+
 export default router;
