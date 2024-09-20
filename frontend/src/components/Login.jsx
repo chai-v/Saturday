@@ -43,7 +43,7 @@ function Login() {
         e.preventDefault();
         if(toggle){
             try{
-                const response = await axios.post("http://localhost:3000/auth/login", {
+                const response = await axios.post("https://saturday-3fw7.onrender.com/auth/login", {
                     email: details.email,
                     password: details.password
                 });
@@ -55,7 +55,7 @@ function Login() {
         } else {
             if(details.password === details.confirmPassword){
                 try{
-                    const response = await axios.post("http://localhost:3000/auth/signup", {
+                    const response = await axios.post("https://saturday-3fw7.onrender.com/auth/signup", {
                         email: details.email,
                         password: details.password
                     });

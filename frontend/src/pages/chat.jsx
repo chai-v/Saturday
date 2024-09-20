@@ -42,7 +42,7 @@ function Chat({handleMenu, isMobile}) {
                     formData.append('images', file);
                 });
 
-                const response = await axios.post('http://localhost:3000/chat/imageupload', formData, {
+                const response = await axios.post('https://saturday-3fw7.onrender.com/chat/imageupload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -59,7 +59,7 @@ function Chat({handleMenu, isMobile}) {
                 
                 setChatHistory(prevChatHistory => [...prevChatHistory, { role: 'User', content: message }]);
 
-                const response = await axios.post('http://localhost:3000/chat/query', {
+                const response = await axios.post('https://saturday-3fw7.onrender.com/chat/query', {
                     email: user.email,
                     chat: chatID,
                     query: message,
