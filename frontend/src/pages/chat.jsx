@@ -152,9 +152,9 @@ function Chat({handleMenu, isMobile}) {
                 </div>
             </div>}
 
-            <div ref={chatContainerRef} className={`flex flex-col flex-1 pt-6 col-span-8 overflow-y-scroll no-scrollbar`}>
-                <div ref={chatContainerRef} className="h-full w-full flex flex-col flex-1 bg-slate-800 px-6 py-4 overflow-y-scroll no-scrollbar rounded-md">
-                    <div className="w-full flex flex-col gap-2 overflow-y-scroll no-scrollbar">
+            <div className={`flex flex-col flex-1 pt-6 col-span-8 overflow-y-scroll no-scrollbar`}>
+                <div className="h-full w-full flex flex-col flex-1 bg-slate-800 px-6 py-4 overflow-y-scroll no-scrollbar rounded-md">
+                    <div ref={chatContainerRef} className="w-full flex flex-col gap-2 overflow-y-scroll no-scrollbar">
                         {chatID === -1 ? null : chatHistory.map((chat, index) => (
                             <div key={index} className={`w-full flex ${chat.role === 'User' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-72 md:max-w-2xl mb-2 p-2 ${chat.role === 'User' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'} rounded shadow`}>
