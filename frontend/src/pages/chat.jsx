@@ -42,7 +42,7 @@ function Chat({handleMenu, isMobile}) {
                     formData.append('images', file);
                 });
 
-                const response = await axios.post('https://saturday-backend.vercel.app/chat/imageupload', formData, {
+                const response = await axios.post('http://localhost:3000/chat/imageupload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -59,7 +59,7 @@ function Chat({handleMenu, isMobile}) {
                 
                 setChatHistory(prevChatHistory => [...prevChatHistory, { role: 'User', content: message }]);
 
-                const response = await axios.post('https://saturday-backend.vercel.app/chat/query', {
+                const response = await axios.post('http://localhost:3000/chat/query', {
                     email: user.email,
                     chat: chatID,
                     query: message,
@@ -85,7 +85,7 @@ function Chat({handleMenu, isMobile}) {
     },[chatHistory, isLoading]);
 
     return (
-        <div className={`w-full h-screen px-4 bg-slate-800 ${isMobile ? 'flex flex-col' : 'grid grid-cols-10'}`}>
+        <div className={`w-full h-screen px-4 !bg-gradient-to-b !from-slate-900 from-50% !to-gray-950 ${isMobile ? 'flex flex-col' : 'grid grid-cols-10'}`}>
             {user.chats.length === 0 ? 
             <>
             {isMobile &&
@@ -97,7 +97,7 @@ function Chat({handleMenu, isMobile}) {
             </div>}
             <div className={`${isMobile ? 'overflow-y-scroll no-scrollbar' : 'col-span-10 grid grid-cols-10'}`}>
                 <div className='col-span-5 p-4 flex'>
-                    <div className='w-full bg-slate-600 my-auto rounded-md p-4 text-white'>
+                    <div className='w-full bg-slate-800 my-auto rounded-md p-4 text-white'>
                         <h1 className='text-xl font-semibold mb-2'>Create a new chat</h1>
                         <p className='text-md mb-2'>Upload your PDF documents to create a new chat with Saturday. Saturday uses content from these documents to aid in answering your queries.</p>
                         <h3 className='text-lg font-semibold mb-2'>Steps to create a new chat</h3>
@@ -110,7 +110,7 @@ function Chat({handleMenu, isMobile}) {
                     </div>
                 </div>
                 <div className='col-span-5 p-4 flex'>
-                    <div className='w-full bg-slate-600 my-auto rounded-md p-4 text-white'>
+                    <div className='w-full bg-slate-800 my-auto rounded-md p-4 text-white'>
                         <h1 className='text-lg font-semibold mb-2'>Query your documents</h1>
                         <p className='text-md mb-2'>Chat with your documents in a multi-modal manner! Provide text queries through the chat or upload images of model papers/question banks to generate answers to them automatically.</p>
                         <h3 className='text-lg font-semibold mb-2'>Steps to query with images</h3>
@@ -139,13 +139,13 @@ function Chat({handleMenu, isMobile}) {
                     <h1 className="text-lg font-bold text-stone-50">{chat ? chat.title : ""}</h1>
                 </div>
                 <div className="px-2 pt-4 text-md font-bold text-stone-50 mb-2">Files</div>
-                <div className="px-2 py-4 text-white text-sm font-semibold bg-slate-700 rounded">
+                <div className="px-2 py-2 text-white text-sm font-semibold bg-slate-800 rounded">
                     {chat && chat.filenames.map((filename, index) => (
                         <p key={index}>{filename}</p>
                     ))}
                 </div>
                 <div className="px-2 pt-4 text-md font-bold text-stone-50 mb-2">Description</div>
-                <div className="w-full h-64 pl-2 pr-6 py-2 text-white font-semibold text-lg overflow-y-scroll no-scrollbar bg-slate-700 rounded">
+                <div className="w-full h-64 pl-2 pr-6 py-2 text-white font-semibold text-lg overflow-y-scroll no-scrollbar bg-slate-800 rounded">
                     <p className='text-xs'>
                         {chat ? chat.description : ""}
                     </p>
@@ -153,17 +153,17 @@ function Chat({handleMenu, isMobile}) {
             </div>}
 
             <div ref={chatContainerRef} className={`flex flex-col flex-1 pt-6 col-span-8 overflow-y-scroll no-scrollbar`}>
-                <div ref={chatContainerRef} className="h-full w-full flex flex-col flex-1 bg-slate-700 px-6 py-4 overflow-y-scroll no-scrollbar rounded-md">
+                <div ref={chatContainerRef} className="h-full w-full flex flex-col flex-1 bg-slate-800 px-6 py-4 overflow-y-scroll no-scrollbar rounded-md">
                     <div className="w-full flex flex-col gap-2 overflow-y-scroll no-scrollbar">
                         {chatID === -1 ? null : chatHistory.map((chat, index) => (
                             <div key={index} className={`w-full flex ${chat.role === 'User' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-72 md:max-w-2xl mb-2 p-2 ${chat.role === 'User' ? 'bg-blue-600 text-white' : 'bg-slate-500 text-white'} rounded shadow`}>
+                                <div className={`max-w-72 md:max-w-2xl mb-2 p-2 ${chat.role === 'User' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'} rounded shadow`}>
                                     <ReactMarkdown className={""}>{chat.content}</ReactMarkdown>
                                 </div>
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="max-w-xl h-24 flex justify-center bg-slate-500 rounded shadow mb-2">
+                            <div className="max-w-xl h-24 flex justify-center bg-slate-700 rounded shadow mb-2">
                                 <div className="w-full animate-pulse p-2 flex flex-col gap-2">
                                     <div className="h-4 bg-slate-300 rounded-full w-[50%]"></div>
                                     <div className="h-4 bg-slate-300 rounded-full w-[65%]"></div>
@@ -175,13 +175,13 @@ function Chat({handleMenu, isMobile}) {
                     </div>
                 </div>
                 {!isMobile &&
-                <div className="bg-slate-700 p-2 rounded-lg w-full mt-2 mb-2 flex items-center">
+                <div className="bg-slate-800 p-2 rounded-lg w-full mt-2 mb-2 flex items-center">
                     <div className="flex items-center">
                         {selectedFiles.map((file, index) => (
                             <img key={index} src={URL.createObjectURL(file)} alt={file.name} className="w-10 h-10 mr-2 rounded-sm" style={{ width: '40px', height: '40px' }} />
                         ))}
                     </div>
-                    <label htmlFor="file-image" className="bg-slate-600 text-white p-1 rounded-full ml-1 mr-2 cursor-pointer">
+                    <label htmlFor="file-image" className="bg-slate-800 text-white p-1 rounded-full ml-1 mr-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="#fff7f7" d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6z"></path></svg>
                     </label>
                     <input id="file-image" type="file" className="hidden" multiple onChange={handleFileChange} />

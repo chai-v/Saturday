@@ -43,7 +43,7 @@ function Login() {
         e.preventDefault();
         if(toggle){
             try{
-                const response = await axios.post("https://saturday-backend.vercel.app/auth/login", {
+                const response = await axios.post("http://localhost:3000/auth/login", {
                     email: details.email,
                     password: details.password
                 });
@@ -55,7 +55,7 @@ function Login() {
         } else {
             if(details.password === details.confirmPassword){
                 try{
-                    const response = await axios.post("https://saturday-backend.vercel.app/auth/signup", {
+                    const response = await axios.post("http://localhost:3000/auth/signup", {
                         email: details.email,
                         password: details.password
                     });
@@ -82,7 +82,7 @@ function Login() {
 
     return (
         <div className={`${isMobile ? 'w-full' : 'w-4/5' } bg-white rounded-md py-4 px-6`}>
-            <h1 className='text-xl font-semibold mb-4'>{toggle ? "Login" : "Sign Up"}</h1>
+            <h1 className='text-xl font-bold mb-4'>{toggle ? "Login" : "Sign Up"}</h1>
             <div className='flex flex-col items-center'>
                 {toggle ? 
                     <div className='w-4/5'>

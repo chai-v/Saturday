@@ -104,6 +104,8 @@ async function generateResponse(email, chatId, query, history){
     })
   );
 
+  console.log(vectorEmbeddings);
+
   try {
     const chain = new ConversationChain({
       prompt: chatPrompt,

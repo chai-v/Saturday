@@ -3,7 +3,7 @@ import { useAuth } from '../../utils/UserContext';
 import { useNavigate } from 'react-router-dom'
 import { useChat } from '../../utils/ChatContext';
 
-function Sidebar({ handleMenu, handleOpen }) {
+function Sidebar({ handleMenu, handleOpen, isMobile }) {
   const { user, userlogin, userlogout } = useAuth();
   const chats = user.chats;
   const { updateChat, chatID, setChatID, chat, setChat, chatHistory, setChatHistory, updated, setUpdated } = useChat();
@@ -41,14 +41,19 @@ function Sidebar({ handleMenu, handleOpen }) {
   };
 
   return (
-    <div className="bg-gray-900 h-screen w-full flex flex-col">
+    <div className="bg-gray-950 h-screen w-full flex flex-col">
       <div className="flex items-center justify-start p-4 ">
         <h1 className="text-white text-xl font-bold">Saturday</h1>
-        <button className='ml-auto' onClick={handleLogout}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M14 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-2"/><path d="M9 12h12l-3-3m0 6l3-3"/></g></svg>
-        </button>
+        {isMobile &&
+        <button className='ml-auto' onClick={()=>{handleMenu()}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 512 512"><path fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M244 400L100 256l144-144M120 256h292"/></svg>
+        </button>}
       </div>
       <div className="flex-1 overflow-y-auto flex flex-col items-center gap-2 py-4">
+        <button htmlFor="file-upload" className="cursor-pointer bg-blue-600 text-white text-center px-4 py-2 rounded-lg w-9/12" onClick={handleModalOpen}>
+          New Chat
+        </button>
+        <hr className="bg-gray-300 opacity-20 my-2 h-px w-9/12 border-none"></hr>
         {chats.map((chat, index) => (
           <button 
             key={chat.id} 
@@ -61,8 +66,8 @@ function Sidebar({ handleMenu, handleOpen }) {
       </div>
 
       <div className="flex flex-col items-center pb-2">
-        <button htmlFor="file-upload" className="cursor-pointer bg-blue-600 text-white text-center px-4 py-2 rounded-lg mb-2 w-9/12" onClick={handleModalOpen}>
-          New Chat
+        <button htmlFor="file-upload" className="cursor-pointer bg-blue-600 text-white text-center px-4 py-2 rounded-lg mb-2 w-9/12" onClick={handleLogout}>
+          Logout
         </button>
       </div>
     </div>

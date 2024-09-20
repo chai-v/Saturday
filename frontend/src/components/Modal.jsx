@@ -34,8 +34,8 @@ const Modal = ({isMobile, handleOpen}) => {
         });
       
         try {
-          const response = await axios.post('https://saturday-backend.vercel.app/fileupload', formData);
-          const newUser = await axios.post('https://saturday-backend.vercel.app/auth/refresh', {
+          const response = await axios.post('http://localhost:3000/fileupload', formData);
+          const newUser = await axios.post('http://localhost:3000/auth/refresh', {
             email: user.email
           })
           await userlogin(newUser.data);

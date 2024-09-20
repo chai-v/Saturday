@@ -21,7 +21,7 @@ function App() {
   }, []);
 
   return (
-    <div className={`w-screen bg-slate-900 flex flex-col items-center`}>
+    <div className={`w-screen !bg-gradient-to-b !from-blue-950 from-10% !to-gray-950 flex flex-col items-center`}>
       {/* Nav bar */}
       <div className="nav w-full h-14 flex items-center justify-between p-4 bg-black content-center frosted sticky top-0 bg-opacity-40 z-40">
         <h1 className="text-slate-300 font-sans font-bold">SATURDAY</h1>
@@ -46,12 +46,12 @@ function App() {
         </div>
         </>
       </div>
-      <div className='bg-slate-200 w-4/5 rounded-md p-6 mb-6'>
+      <div className='bg-slate-100 w-4/5 rounded-md p-6 mb-6'>
           <h1 className='font-bold text-blue-950 text-2xl'>Saturday</h1>
           <p>A multi modal chatbot powered by Gemini to consume notes with ease</p>
           <p>A play on Tony Stark's Friday, Saturday allows users query their PDF notes and get custom responses with the help of embeddings. Users can also query their notes using images of question banks</p>
           <h1 className='font-bold text-blue-950 text-xl mt-4 mb-2'>Architecture</h1>
-          <img className={`${isMobile ? 'w-full' : 'w-1/2'} mr-auto ml-auto mb-2`} src="/arch.png"></img>
+          <img className={`${isMobile ? 'w-full' : 'w-1/2'} mr-auto ml-auto mb-2 rounded-md`} src="/arch.png"></img>
           <p className='mb-2'>To start a new chat, PDFs must be uploaded. Each PDF is then procressed and a new embeddings index is created on Pinecone.</p>
           <p className='mb-2'>All queries are answered with the power of Gemini 1.5</p>
           <p className='mb-2'>When users send a query, the information relevent to the query is fetched from the PDF with Pinecone through cosine similarity search.</p>

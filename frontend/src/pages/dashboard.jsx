@@ -42,7 +42,7 @@ function Dashboard() {
               : 'col-span-1'
           }`}
         >        
-        <Sidebar handleMenu={handleMenu} handleOpen={handleOpen} />
+        <Sidebar handleMenu={handleMenu} handleOpen={handleOpen} isMobile={isMobile}/>
       </div>
 
       {/* Main Content Area */}
